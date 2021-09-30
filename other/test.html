@@ -10,17 +10,19 @@
     <script>
         var throttle = (func, timeout) => {
             let last_execution;
+            let count_timer;
             return function(){
                 let now = new Date().getTime();
                 if(!last_execution || now > timeout + last_execution) {
-                    last_execution = now;
-                    func.apply(this, arguments);
                     console.log("go if", last_execution, now)
+                    last_execution = now;
+                    func.apply(this, arguments); 
                 } else {
-                    setTimeout(function(){
+                    console.log("go else", last_execution, now)
+                    clearTimeout(count_timer)
+                    count_timer = setTimeout(function(){
                         last_execution = now;
                         func.apply(this, arguments);
-                        console.log("go else", last_execution, now)
                     },timeout)
                 }
             }
@@ -28,7 +30,7 @@
         function windowResize() {
             console.log("resized")
         }
-        window.addEventListener('resize', throttle(windowResize, 10000));  
+        window.addEventListener('resize', throttle(windowResize, 5000));  
     </script>
 </body>
 </html>
