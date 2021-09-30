@@ -8,28 +8,27 @@
 </head>
 <body>
     <script>
-        var getPagination = (offset, limit, total) => {
-            if (offset >= total || limit < 1) {
-                console.log("false number")
-                return false;
+        var throttle = (func, timeout) => {
+            let last_execution;
+            return function(){
+                let now = new Date().getTime();
+                if(!last_execution || now > timeout + last_execution) {
+                    last_execution = now;
+                    func.apply(this, arguments);
+                    console.log("go if", last_execution, now)
+                } else {
+                    setTimeout(function(){
+                        last_execution = now;
+                        func.apply(this, arguments);
+                        console.log("go else", last_execution, now)
+                    },timeout)
+                }
             }
-            const res = {
-                currentPage: 1, 
-                totalPage: 1, 
-                renderPages: []
-            }
-            let pagesArr = [0, 1, 2, 3, 4];
-            res.totalPage = Math.trunc(total/limit) + 1;
-            res.currentPage = Math.trunc(offset/limit) + 1;
-
-            let addPage = res.currentPage - 2;
-            let overPage = addPage + 4 > res.totalPage? addPage + 4 - res.totalPage: 0; // if last page is over than max render page
-            let preOverPage = addPage < 0 ? addPage - 1 : 0; // if first page is < 0
-            res.renderPages = pagesArr.map(page => page + addPage - overPage - preOverPage);
-            console.log(res)
-            return res
         }
-        getPagination(6, 5, 33)
+        function windowResize() {
+            console.log("resized")
+        }
+        window.addEventListener('resize', throttle(windowResize, 10000));  
     </script>
 </body>
 </html>
