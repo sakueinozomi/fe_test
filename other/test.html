@@ -8,29 +8,64 @@
 </head>
 <body>
     <script>
-        var throttle = (func, timeout) => {
-            let last_execution;
-            let count_timer;
-            return function(){
-                let now = new Date().getTime();
-                if(!last_execution || now > timeout + last_execution) {
-                    console.log("go if", last_execution, now)
-                    last_execution = now;
-                    func.apply(this, arguments); 
-                } else {
-                    console.log("go else", last_execution, now)
-                    clearTimeout(count_timer)
-                    count_timer = setTimeout(function(){
-                        last_execution = now;
-                        func.apply(this, arguments);
-                    },timeout)
+        class Stack{
+            constructor() {
+                this.data_length = 0;
+                this.lastNode = null;
+            }
+            _createNode(val) {
+                const node = {
+                    val,
+                    nextNode: null,
+                    preNode: null
                 }
+                return node;
+            }
+            push(data){
+                const node = this._createNode(data);
+                if (this.lastNode) {
+                    node.preNode = this.lastNode;
+                    this.lastNode.nextNode = node;
+                }
+                this.data_length++;
+                this.lastNode = node;
+            }
+            pop(){
+                if ( this.data_length === 0 ){
+                    return null;
+                }
+                const node = this.lastNode;
+                const last = node.preNode;
+                if (last) {
+                    last.next = null;
+                }
+                this.lastNode = last;
+                node.preNode = null; //disconect this poped object's binding.
+                this.data_length--;
+                return node.val;
+            }
+            size(){
+                return this.data_length;
             }
         }
-        function windowResize() {
-            console.log("resized")
-        }
-        window.addEventListener('resize', throttle(windowResize, 5000));  
+        
+        const list = new Stack();
+        console.log('size',list.size())
+        list.push(5);
+        list.push(3);
+        console.log('size',list.size())
+        console.log(list.pop())
+        list.push(4);
+        console.log('size',list.size())
+        list.push(2);
+        console.log(list.pop())
+        list.push(1);
+        console.log(list.pop())
+        console.log(list.pop())
+        console.log('size',list.size())
+        console.log(list.pop())
+        console.log(list.pop())
+        console.log('size',list.size())
     </script>
 </body>
 </html>
